@@ -57,31 +57,56 @@ def generate_pattern():
     num_cols = 5        # Number of columns in the pattern.
     spacing = 3.0       # Distance between object centers.
 
-    # TODO: Create a nested loop that iterates over rows and columns.
-    #
-    # HINT -- your loop structure should look something like this:
-    #
-    #   for row in range(num_rows):
-    #       for col in range(num_cols):
-    #           # Calculate position
-    #           x_pos = col * spacing
-    #           z_pos = row * spacing
-    #
-    #           # TODO: Add a conditional here that changes something
-    #           # based on row, col, or (row + col).
-    #           # For example:
-    #           #   if (row + col) % 2 == 0:
-    #           #       create a cube
-    #           #   else:
-    #           #       create a sphere
-    #
-    #           # TODO: Create the object using cmds.polyCube(), etc.
-    #
-    #           # TODO: Position the object using cmds.move().
-    #
-    #           # TODO: (Optional) Vary the scale using cmds.scale().
+    # loop controling rows for Z
+    for current_row in range(num_rows):
+        # loop controls columns for Z
+        for current_column in range(num_cols):
+             
+               # Calculate position for each object
+                position_x = current_column * spacing
+                position_z = current_row * spacing
+    
+                # Use modulo 3 to go through the 3 object types
+                pattern_index = (current_row + current_column) % 3
 
-    pass  # Remove this line once you add your code.
+                # Use (row+column) % 3 to create patterns
+                if pattern_index == 0:
+                    # create first pattern type: Cube
+                    created_object = cmds.polyCube()[0]
+                    object_height_scale = 1 + (current_row * 0.3)
+                    object_color = (1, 0, 0)  # Red
+
+                elif pattern_index == 1:
+                    # create second pattern type: Sphere
+                    created_object = cmds.polySphere()[0]
+                    object_height_scale = 1 + (current_column * 0.3)
+                    object_color = (0, 0, 1)  # Blue
+
+                else:
+                    # create pattern type: Cylinder 
+                    created_object = cmds.polyCylinder()[0]
+                    object_height_scale = 1 + ((current_row + current_column) * 0.2)
+                    object_color = (0, 1, 0)  # Green
+
+
+                # Move object into grid position using the calculated coordinates
+                cmds.move(position_x, 0, position_z, created_object)
+
+                # Scale only in Y to show height variety while keeping base consistent
+                cmds.scale(1, object_height_scale, 1, created_object)
+            
+                # Each object gets its own shader so color differs are clear
+                material_shader = cmds.shadingNode("lambert", asShader=True)
+
+                # Apply RGB values defined in the conditional
+                cmds.setAttr(material_shader + ".color",object_color[0],object_color[1],object_color[2],type="double3")
+
+                # Assign the shader to the object
+                cmds.select(created_object)
+                cmds.hyperShade(assign=material_shader)
+
+
+
 
 
 # ---------------------------------------------------------------------------
