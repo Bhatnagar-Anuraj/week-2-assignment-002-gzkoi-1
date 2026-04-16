@@ -38,6 +38,7 @@ COMMENT HABITS (practice these throughout the course):
 """
 
 import maya.cmds as cmds
+import math
 
 # Clear the scene.
 cmds.file(new=True, force=True)
@@ -63,8 +64,8 @@ def generate_pattern():
         for current_column in range(num_cols):
              
                # Calculate position for each object
-                position_x = current_column * spacing
-                position_z = current_row * spacing
+                pos_x = current_column * spacing
+                pos_z = current_row * spacing
     
                 # Use modulo 3 to go through the 3 object types
                 pattern_index = (current_row + current_column) % 3
@@ -90,7 +91,7 @@ def generate_pattern():
 
 
                 # Move object into grid position using the calculated coordinates
-                cmds.move(position_x, 0, position_z, created_object)
+                cmds.move(pos_x, 0, pos_z, created_object)
 
                 # Scale only in Y to show height variety while keeping base consistent
                 cmds.scale(1, object_height_scale, 1, created_object)
